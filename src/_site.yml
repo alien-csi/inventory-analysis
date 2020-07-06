@@ -1,0 +1,9 @@
+  
+name: "analysis"
+output_dir: "../docs"
+include: ["static/"]
+output:
+  html_document:
+    theme: yeti
+    df_print: paged
+    css: "static/css/analysis.css"

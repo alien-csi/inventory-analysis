@@ -1,0 +1,6 @@
+---
+title: "Analysis"
+---
+
+```{r, child = "../README.md"}
+```
