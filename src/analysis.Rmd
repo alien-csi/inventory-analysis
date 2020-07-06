@@ -36,4 +36,34 @@ library(janitor)        # To clean input data
 library(ordinal)
 ```
 
+# Read source data
+
+Create a data frame `input_data` from the source data:
+ 
+```{r}
+input_data <- read_excel(path = here("data", "GLMData2.xlsx")) 
+```
+
+Preview data:
+
+```{r}
+input_data %>% head(n = 5)
+```
+
+# Pre-processing
+
+## Tidy data
+
+```{r}
+input_data %<>%
+  remove_empty("rows") %>%       # Remove empty rows
+  clean_names()                  # Have sensible (lowercase) column names
+```
+
+Rename variable:
+
+```{r}
+input_data <- input_data %>% rename(no_ias_records = number_of_alien_or_invasive_alien_species_records)
+```
+
 
