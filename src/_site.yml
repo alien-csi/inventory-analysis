@@ -2,6 +2,14 @@
 name: "analysis"
 output_dir: "../docs"
 include: ["static/"]
+navbar:
+  title: "inventory-analysis"
+  left:
+    - text: "Analysis"
+      href: analysis.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/alien-csi/inventory-analysis
 output:
   html_document:
     theme: yeti
