@@ -79,20 +79,8 @@ Attempt for analysing the data:
 ```{r}
 model <- clm(no_ias_records ~ design, data = input_data)
 ```
-
-
-
-```{r}
-lm1 <- lm(no_records ~ duration, family = "poisson", data = input_data)
 ```
 
 ```{r}
-lm1 = lm(no.records ~ Duration + Design + Social.media + Skills + Contribution.frequency + SpeciesID + Guidelines + Training + Map + Informing + Feedback, family=“poisson”, data = GLMData)
 ```
-
-
-
-lm2 = lm(No.participants ~ Duration + Design + Social.media + Skills + Contribution.frequency + SpeciesID + Guidelines + Training + Map + Informing + Feedback, family=“poisson”, data = GLMData)
-
-lm3 = lm(No.publications ~ Duration + Design + Social.media + Skills + Contribution.frequency + SpeciesID + Guidelines + Training + Map + Informing + Feedback, family=“poisson”, data = GLMData)
 
