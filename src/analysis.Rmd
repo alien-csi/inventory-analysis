@@ -77,10 +77,14 @@ input_data$no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
 Attempt for analysing the data:
 
 ```{r}
-model <- clm(no_ias_records ~ design, data = input_data)
-```
+model <- 
+  clm(
+    no_ias_records ~ duration + design + social_media + species_id + guidelines + training + sightings_map + active_informing + feedback,
+    data = input_data)
 ```
 
 ```{r}
+summary(model)
 ```
 
+Conclusion: this model seems to work, signifcant effect of design, all the others seem to be non-significant
