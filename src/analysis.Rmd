@@ -1,22 +1,20 @@
 ---
 title: "Analysis"
-subtitle: ""
 author:
 - Veronica Price-Jones
 - Lien Reyserhove
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     df_print: paged
     number_sections: yes
     toc: yes
     toc_depth: 3
     toc_float: yes
-#  pdf_document:
-#    df_print: kable
-#    number_sections: yes
-#    toc: yes
-#    toc_depth: 3
+subtitle: ''
 ---
 
 (short description of the goal of this document)
