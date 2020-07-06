@@ -60,10 +60,15 @@ input_data %<>%
   clean_names()                  # Have sensible (lowercase) column names
 ```
 
-Rename variable:
+Rename variables to simplify the analysis:
 
 ```{r}
-input_data <- input_data %>% rename(no_ias_records = number_of_alien_or_invasive_alien_species_records)
+input_data <- input_data %>% 
+  rename(no_ias_records = number_of_alien_or_invasive_alien_species_records) %>% 
+  rename(duration = duration_as_of_2020) %>% 
+  rename(skills = skills_knowledge_needed) %>% 
+  rename(species_id = species_id_materials)
+  
 ```
 
 # Analysis
@@ -74,7 +79,17 @@ Define `no_ias_records` as and ordered factor:
 input_data$no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
 ```
 
-Attempt for analysing the data:
+Attempt for analysing the data
+- Independent variable: number of invasive alien records
+- Dependent variables: 
+  - duration
+  - social media
+  - species id
+  - guidlines
+  - training
+  - sightings map
+  - active informating
+  - feedback
 
 ```{r}
 model <- 
