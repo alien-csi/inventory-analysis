@@ -257,7 +257,7 @@ summary(clm_publications)
 ```  
 
 ```{r}
-anova(clm_publications)
+anova(clm_participants)
 ```
 
 
