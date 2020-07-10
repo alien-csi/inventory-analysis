@@ -39,7 +39,7 @@ library(ordinal)
 Create a data frame `input_data` from the source data:
  
 ```{r}
-input_data <- read_excel(path = here("data", "GLMData2.xlsx")) 
+input_data <- read_csv(file = here::here("data", "CLMData.csv")) 
 ```
 
 Preview data:
@@ -52,24 +52,45 @@ input_data %>% head(n = 5)
 
 ## Tidy data
 
+Remove empty rows (if present) and clean column headers:
+
 ```{r}
 input_data %<>%
   remove_empty("rows") %>%       # Remove empty rows
   clean_names()                  # Have sensible (lowercase) column names
 ```
 
-Rename variables to simplify the analysis:
+Show cleaned column names:
 
 ```{r}
-input_data <- input_data %>% 
-  rename(no_ias_records = number_of_alien_or_invasive_alien_species_records) %>% 
-  rename(duration = duration_as_of_2020) %>% 
-  rename(skills = skills_knowledge_needed) %>% 
-  rename(species_id = species_id_materials)
-  
+colnames(input_data)
 ```
 
 # Analysis
+
+## Number of invasive alien records
+
+Rename variable `number_of_alien_or_invasive_alien_species_records` to `no_ias_records` to simplify the analysis:
+
+
+```{r}
+input_data <- input_data %>% 
+  rename(no_ias_records = number_of_alien_or_invasive_alien_species_records) 
+```
+
+Inspect different values of `no_ias_records`:
+
+```{r}
+unique(input_data$no_ias_records)
+```
+
+Change `Info not available` and `Not applicable` to NA:
+
+```{r}
+input_data$no_ias_records <- na_if(input_data$no_ias_records, "Info not available") 
+input_data$no_ias_records <- na_if(input_data$no_ias_records, "Not applicable") 
+input_data$no_ias_records <- na_if(input_data$no_ias_records, "NA") 
+```
 
 Define `no_ias_records` as and ordered factor:
 
@@ -77,27 +98,167 @@ Define `no_ias_records` as and ordered factor:
 input_data$no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
 ```
 
-Attempt for analysing the data
-- Independent variable: number of invasive alien records
-- Dependent variables: 
-  - duration
-  - social media
-  - species id
-  - guidlines
-  - training
-  - sightings map
-  - active informating
-  - feedback
+The following variables are specified for analysis:
+(Note: this was based on inspecting the models of Veronica)
+- `design`
+- `duration`
+- `sm_yn`
+- `species_id`
+- `training_yn`
+- `map`
+- `active_informing`
+- `feedback`
+
+Inspect dependent variables on percentage of `NA`:
+
+```{r}
+input_data %>% 
+  select(design, duration, sm_yn, species_id, training_yn, design, map, active_informing, feedback) %>% 
+  map(~mean(is.na(.)))
+```
+
+Conclusion: variables `feedback` (22%) and `map` have the highest percentages of missing values
+
+
+Cumulative link model:
 
 ```{r}
 model <- 
   clm(
-    no_ias_records ~ duration + design + social_media + species_id + guidelines + training + sightings_map + active_informing + feedback,
+    no_ias_records ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
     data = input_data)
 ```
+
+Model output:
 
 ```{r}
 summary(model)
 ```
 
-Conclusion: this model seems to work, signifcant effect of design, all the others seem to be non-significant
+"Readable" output (in terms of significance)
+NOTE: BE CAREFULL WITH THE INTERPRETATION, MUCH BE DOUBLE CHECKED!
+
+```{r}
+anova(model)
+```
+
+
+Conclusion: 
+- this model seems to work, signifcant effect of design, all the others seem to be non-significant
+- 54 deleted observations -- why?
+  - these missing values seem to be due to empty values in the dependent AND independent variables
+  
+  
+## Number of participants
+
+Inspect different values of `number_of_participants`:
+
+```{r}
+unique(input_data$number_of_participants)
+```
+
+Change `Info not available` and `Not applicable` to NA:
+
+```{r}
+input_data$number_of_participants <- na_if(input_data$number_of_participants, "Info not available") 
+input_data$number_of_participants <- na_if(input_data$number_of_participants, "Not applicable") 
+input_data$number_of_participants <- na_if(input_data$number_of_participants, "NA") 
+```
+
+Define `number_of_participants` as and ordered factor:
+
+```{r}
+input_data$number_of_participants <- factor(input_data $ number_of_participants, ordered = TRUE)
+```
+
+The following variables are specified for analysis:
+(Note: this was based on inspecting the models of Veronica)
+- `design`
+- `duration`
+- `sm_yn`
+- `species_id`
+- `training_yn`
+- `map`
+- `active_informing`
+- `feedback`
+
+Cumulative link model:
+
+```{r}
+clm_participants <- 
+  clm(
+    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_participants)
+```  
+
+```{r}
+anova(clm_participants)
+```
+
+Conclusion: 
+- significant effect of `design`
+- marginally significant effect of `species_id`
+- 56 rows ommited
+
+
+  
+## Number of publications
+
+Inspect different values of `number_of_publications`:
+
+```{r}
+unique(input_data$number_of_publications)
+```
+
+Change `Unknown` and `Not applicable` to NA:
+
+```{r}
+input_data$number_of_publications <- na_if(input_data$number_of_publications, "Unknown") 
+input_data$number_of_publications <- na_if(input_data$number_of_publications, "Not applicable") 
+input_data$number_of_publications <- na_if(input_data$number_of_publications, "NA") 
+```
+
+Define `number_of_publications` as and ordered factor:
+
+```{r}
+input_data$number_of_publications <- factor(input_data $ number_of_publications, ordered = TRUE)
+```
+
+The following variables are specified for analysis:
+(Note: this was based on inspecting the models of Veronica)
+- `design`
+- `duration`
+- `sm_yn`
+- `species_id`
+- `training_yn`
+- `map`
+- `active_informing`
+- `feedback`
+
+Cumulative link model:
+
+```{r}
+clm_publications <- 
+  clm(
+    number_of_publications ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_publications)
+```  
+
+```{r}
+anova(clm_publications)
+```
+
+
+  
