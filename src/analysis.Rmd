@@ -31,7 +31,7 @@ library(magrittr)       # To use %<>% pipes
 library(here)           # To find files
 library(readxl)         # To read Excel files
 library(janitor)        # To clean input data
-library(ordinal)
+library(ordinal)        # To perform clm
 ```
 
 # Read source data
@@ -72,7 +72,6 @@ colnames(input_data)
 
 Rename variable `number_of_alien_or_invasive_alien_species_records` to `no_ias_records` to simplify the analysis:
 
-
 ```{r}
 input_data <- input_data %>% 
   rename(no_ias_records = number_of_alien_or_invasive_alien_species_records) 
@@ -92,28 +91,52 @@ input_data$no_ias_records <- na_if(input_data$no_ias_records, "Not applicable")
 input_data$no_ias_records <- na_if(input_data$no_ias_records, "NA") 
 ```
 
-Define `no_ias_records` as and ordered factor:
+Define `no_ias_records` as an ordered factor:
 
 ```{r}
 input_data$no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
 ```
 
+Re-order `no_ias_records`:
+
+```{r}
+input_data$no_ias_records <- 
+  ordered(input_data$no_ias_records, 
+    levels = c("1 - 50", "51 - 100",
+                "101 - 500", "501 - 1000", 
+                "1001 - 5000", "5001 - 10000",
+                "10001 - 50000", "50001 - 100000", 
+                "100001 - 500000","500001 - 1000000",
+                "> 1000001"))
+```
+
+Verify order:
+
+```{r}
+levels(input_data$no_ias_records)
+```
+
+### Primary Analysis
+
 The following variables are specified for analysis:
 (Note: this was based on inspecting the models of Veronica)
-- `design`
 - `duration`
+- `design`
 - `sm_yn`
-- `species_id`
+- `skills`
+- `contribution_frequency`
+- `guidelines`
 - `training_yn`
 - `map`
 - `active_informing`
 - `feedback`
+- `support`
 
 Inspect dependent variables on percentage of `NA`:
 
 ```{r}
 input_data %>% 
-  select(design, duration, sm_yn, species_id, training_yn, design, map, active_informing, feedback) %>% 
+  select(design, duration, sm_yn, skills, contribution_frequency, guidelines, training_yn, design, map, active_informing, feedback, support) %>% 
   map(~mean(is.na(.)))
 ```
 
@@ -123,30 +146,121 @@ Conclusion: variables `feedback` (22%) and `map` have the highest percentages of
 Cumulative link model:
 
 ```{r}
-model <- 
+clm_records <- 
   clm(
-    no_ias_records ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    no_ias_records ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
 Model output:
 
 ```{r}
-summary(model)
+summary(clm_records)
 ```
 
 "Readable" output (in terms of significance)
 NOTE: BE CAREFULL WITH THE INTERPRETATION, MUCH BE DOUBLE CHECKED!
 
 ```{r}
-anova(model)
+anova(clm_records)
 ```
 
+Conclusion: 
+- significant positive effect of map; significant negative effect of feedback and of low & no skill requirement
+- 64 deleted observations due to empty values in the dependent and independent variables
+
+### Secondary Analysis: Engagement
+
+The following variables are specified for analysis:
+- `duration`
+- `eng_website`
+- `eng_sm`
+- `eng_live`
+- `eng_newsletter`
+- `eng_school`
+- `eng_exhibitions`
+- `eng_blitz`
+- `eng_gaming`
+- `eng_other`
+
+Convert predictors to factors:
+
+```{r}
+input_data$eng_website <- factor(input_data $ eng_website)
+input_data$eng_sm <- factor(input_data $ eng_sm)
+input_data$eng_live <- factor(input_data $ eng_live)
+input_data$eng_newsletter <- factor(input_data $ eng_newsletter)
+input_data$eng_school <- factor(input_data $ eng_school)
+input_data$eng_exhibitions <- factor(input_data $ eng_exhibitions)
+input_data$eng_blitz <- factor(input_data $ eng_blitz)
+input_data$eng_gaming <- factor(input_data $ eng_gaming)
+input_data$eng_other <- factor(input_data $ eng_other)
+```
+
+Cumulative link model:
+
+```{r}
+clm_eng_records <- 
+  clm(
+    no_ias_records ~ duration + eng_website + eng_sm + eng_live + eng_newsletter + eng_school + eng_exhibitions + eng_blitz + eng_gaming + eng_other,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_eng_records)
+```
+
+```{r}
+anova(clm_eng_records)
+```
 
 Conclusion: 
-- this model seems to work, signifcant effect of design, all the others seem to be non-significant
-- 54 deleted observations -- why?
-  - these missing values seem to be due to empty values in the dependent AND independent variables
+- no significant results
+- 50 deleted observations
+
+
+### Secondary Analysis: Social media
+The following variables are specified for analysis:
+- `duration`
+- `sm_facebook`
+- `sm_twitter`
+- `sm_instagram`
+- `sm_you_tube`
+
+Convert predictors to factors:
+
+```{r}
+input_data$sm_facebook <- factor(input_data $ sm_facebook)
+input_data$sm_instagram <- factor(input_data $ sm_instagram)
+input_data$sm_twitter <- factor(input_data $ sm_twitter)
+input_data$sm_you_tube <- factor(input_data $ sm_you_tube)
+input_data$sm_other <- factor(input_data $ sm_other)
+```
+
+Cumulative link model:
+
+```{r}
+clm_sm_records <- 
+  clm(
+    no_ias_records ~ duration + sm_facebook + sm_twitter + sm_instagram + sm_you_tube,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_sm_records)
+
+```{r}
+anova(clm_sm_records)
+```
+
+Conclusion: 
+- no significant results
+- 54 deleted observations
+
   
   
 ## Number of participants
@@ -165,22 +279,39 @@ input_data$number_of_participants <- na_if(input_data$number_of_participants, "N
 input_data$number_of_participants <- na_if(input_data$number_of_participants, "NA") 
 ```
 
-Define `number_of_participants` as and ordered factor:
+Define `number_of_participants` as an ordered factor:
 
 ```{r}
 input_data$number_of_participants <- factor(input_data $ number_of_participants, ordered = TRUE)
 ```
 
+Re-order `number_of_participants`:
+
+```{r}
+input_data$number_of_participants <- ordered (input_data$number_of_participants, levels = c("1 - 50", "51 - 100", 
+"101 - 500", "501 - 1000", "1001 - 2000", "2001 - 5000", "5001 - 10000", "> 10001"))
+```
+
+Verify order:
+
+```{r}
+levels(input_data$number_of_participants)
+```
+
+### Primary Analysis
+
 The following variables are specified for analysis:
-(Note: this was based on inspecting the models of Veronica)
 - `design`
 - `duration`
 - `sm_yn`
-- `species_id`
+- `skills`
+- `contribution_frequency`
+- `guidelines`
 - `training_yn`
 - `map`
 - `active_informing`
 - `feedback`
+- `support`
 
 Cumulative link model:
 
@@ -202,9 +333,74 @@ anova(clm_participants)
 ```
 
 Conclusion: 
-- significant effect of `design`
-- marginally significant effect of `species_id`
-- 56 rows ommited
+- significant positive effect of map
+- 61 deleted observations
+
+### Secondary Analysis: Engagement
+
+The following variables are specified for analysis:
+- `duration`
+- `eng_website`
+- `eng_sm`
+- `eng_live`
+- `eng_newsletter`
+- `eng_school`
+- `eng_exhibitions`
+- `eng_blitz`
+- `eng_gaming`
+- `eng_other`
+
+Cumulative link model:
+
+```{r}
+clm_eng_participants <- 
+  clm(
+    number_of_participants ~ duration + eng_website + eng_sm + eng_live + eng_newsletter + eng_school + eng_exhibitions + eng_blitz + eng_gaming + eng_other,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_eng_participants)
+```  
+
+```{r}
+anova(clm_eng_participants)
+```
+
+
+### Secondary Analysis: Social Media
+
+The following variables are specified for analysis:
+- `duration`
+- `sm_facebook`
+- `sm_twitter`
+- `sm_instagram`
+- `sm_you_tube`
+
+Cumulative link model:
+
+```{r}
+clm_sm_participants <- 
+  clm(
+    number_of_participants ~ duration + sm_facebook + sm_twitter + sm_instagram + sm_you_tube,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_sm_participants)
+```  
+
+```{r}
+anova(clm_sm_participants)
+```
+
+Conclusion:
+- no significant results
+- 46 deleted observations
 
 
   
@@ -224,22 +420,38 @@ input_data$number_of_publications <- na_if(input_data$number_of_publications, "N
 input_data$number_of_publications <- na_if(input_data$number_of_publications, "NA") 
 ```
 
-Define `number_of_publications` as and ordered factor:
+Define `number_of_publications` as an ordered factor:
 
 ```{r}
 input_data$number_of_publications <- factor(input_data $ number_of_publications, ordered = TRUE)
 ```
 
+Re-order `number_of_participants`:
+
+```{r}
+input_data$number_of_publications <- ordered (input_data$number_of_publications, levels = c("0", "1 to 5", "6 to 10", "11 to 20", "21 - 50", "> 100"))
+```
+
+Verify order:
+
+```{r}
+str(input_data$number_of_publications)
+```
+
+### Primary Analysis
+
 The following variables are specified for analysis:
-(Note: this was based on inspecting the models of Veronica)
 - `design`
 - `duration`
 - `sm_yn`
-- `species_id`
+- `skills`
+- `contribution_frequency`
+- `guidelines`
 - `training_yn`
 - `map`
 - `active_informing`
 - `feedback`
+- `support`
 
 Cumulative link model:
 
@@ -257,8 +469,80 @@ summary(clm_publications)
 ```  
 
 ```{r}
-anova(clm_participants)
+anova(publications)
 ```
 
+Conclusion:
+- significant positive effect of training and map; significant negative effect of support and limited or no skill requirement
+- 63 deleted observations
 
-  
+### Secondary Analysis: Engagement
+
+The following variables are specified for analysis:
+- `duration`
+- `eng_website`
+- `eng_sm`
+- `eng_live`
+- `eng_newsletter`
+- `eng_school`
+- `eng_exhibitions`
+- `eng_blitz`
+- `eng_gaming`
+- `eng_other`
+
+
+Cumulative link model:
+
+```{r}
+clm_eng_publications <- 
+  clm(
+    number_of_publications ~ duration + eng_website + eng_sm + eng_live + eng_newsletter + eng_school + eng_exhibitions + eng_blitz + eng_gaming + eng_other,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_eng_publications)
+```  
+
+```{r}
+anova(clm_eng_publications)
+```
+
+Conclusion:
+- significant positive effect of exhibition
+- 48 deleted observations
+
+
+### Secondary Analysis: Social Media
+
+The following variables are specified for analysis:
+- `duration`
+- `sm_facebook`
+- `sm_twitter`
+- `sm_instagram`
+- `sm_you_tube`
+
+Cumulative link model:
+
+```{r}
+clm_sm_publications <- 
+  clm(
+    number_of_publications ~ duration + sm_facebook + sm_twitter + sm_instagram + sm_you_tube,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_sm_publications)
+```  
+
+```{r}
+anova(clm_sm_publications)
+```
+
+Conclusion:
+- no significant results
+- 52 deleted observations  
