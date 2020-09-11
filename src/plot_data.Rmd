@@ -80,6 +80,8 @@ print(biosecurity)
 
 ## Invasive alien species of union concern
 
+### General
+
 Summarize records
 
 ```{r}
@@ -117,7 +119,7 @@ union_concern
 Plot species of union concern:
 
 ```{r}
-png("union_concern.png")
+png(filename = here::here("data","processed","union_concern.png"))
 union_concern <-
   ggplot(data = union_concern, 
        aes(x = fct_relevel(union_concern_recoded, "Direct focus", "Amongst\nother species", "No", "Unknown"),
@@ -132,7 +134,101 @@ union_concern <-
 print(union_concern)
 ```
 
+### Per country
+
+Separate country on comma (create new DF)
+
+```{r}
+country_long <-
+  input_data %>% separate(country, 
+                          into = paste("country", c(1:38), sep="_"),
+                          sep = ",",
+                          remove = FALSE)
+```
+
+From wide to long:
+
+```{r}
+country_long %<>% 
+  gather(key = "key",
+         value = "country_separate",
+         paste("country", c(1:38), sep="_"),
+         na.rm = TRUE)
+```
+
+Remove whitespace:
+
+```{r}
+country_long %<>% 
+  mutate(country_separate = trimws(country_separate, "both"))
+```
+
+Show ias records per country
+
+```{r}
+country_long %<>% 
+  select(country_separate, union_concern_recoded) %>% 
+  group_by_all() %>% 
+  summarize(n = n()) %>% 
+  mutate(freq = n / sum(n))
+country_long
+```
+
+Absoluut
+
+```{r}
+png(filename = here::here("data", "processed", "ias_country_abs.png"),
+    width = 2000,
+    height = 1000,
+    units = "px")
+ias_country_abs <-
+  ggplot(data = country_long, 
+         aes(x = country_separate, y = n, fill = union_concern_recoded)) +
+    geom_bar(position = "stack", stat = "identity") + 
+    theme_classic() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          axis.text.x = element_text(size = 20, angle=90, hjust=1),
+          axis.text.y = element_text(size = 20),
+          axis.title.y = element_text(size = 20),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 20)
+          ) +
+    ylab("Number of Projects") + xlab("") +
+    scale_fill_discrete(
+      name = "Category IAS concern",
+      labels = c("amongst other species", "direct focus", "no", "unknown"))
+print(ias_country_abs)
+```
+
+Relatief
+
+```{r}
+png(filename = here::here("data", "processed", "ias_country_rel.png"),
+    width = 2000,
+    height = 1000,
+    units = "px")
+ias_country_rel <-
+  ggplot(data = country_long, 
+         aes(x = country_separate, y = freq, fill = union_concern_recoded)) +
+    geom_bar(position = "stack", stat = "identity") + 
+    theme_classic() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          axis.text.x = element_text(size = 20, angle=90, hjust=1),
+          axis.text.y = element_text(size = 20),
+          axis.title.y = element_text(size = 20),
+          legend.title = element_text(size = 20),
+          legend.text = element_text(size = 20)
+          ) +
+    ylab("Number of Projects") + xlab("") +
+    scale_fill_discrete(
+      name = "Category IAS concern",
+      labels = c("amongst other species", "direct focus", "no", "unknown"))
+print(ias_country_rel)
+```
+
 ## Number of participants
+
+Inspect data
 
 ```{r}
 input_data %>% 
@@ -142,31 +238,33 @@ input_data %>%
   arrange(records)
 ```
 
-Recode:
+Recode data
 
 ```{r}
 input_data %<>% 
   mutate(number_of_participants_new = na_if(number_of_participants, "Info not available"))
 ```
 
-Define `number_of_participants_new` as an ordered factor:
+Define `number_of_participants_new` as an ordered factor
 
 ```{r}
 input_data $ number_of_participants_new <- factor(input_data $ number_of_participants_new, ordered = TRUE)
 ```
 
-Re-order `number_of_participants`:
+Re-order `number_of_participants`
 
 ```{r}
 input_data $ number_of_participants_new <- ordered (input_data $ number_of_participants_new, levels = c("1 - 50", "51 - 100", 
 "101 - 500", "501 - 1000", "1001 - 2000", "2001 - 5000", "5001 - 10000", "> 10001"))
 ```
 
-Verify order:
+Verify order
 
 ```{r}
 levels(input_data$number_of_participants_new)
 ```
+
+Summarize for graph
 
 ```{r}
 number_of_participants <-
@@ -179,7 +277,7 @@ number_of_participants <-
 Plot species of union concern:
 
 ```{r}
-png("participants.png")
+png(filename = here::here("data", "processed", "participants.png"))
 participants <-
   ggplot(data = number_of_participants, 
        aes(x = number_of_participants_new,
@@ -196,6 +294,8 @@ print(participants)
 
 ## Number of invasive alien species records
 
+Inspect data
+
 ```{r}
 input_data %>% 
   select(number_of_alien_or_invasive_alien_species_records) %>% 
@@ -205,7 +305,6 @@ input_data %>%
 ```
 
 Recode:
-
 ```{r}
 input_data %<>% 
   mutate(no_ias_records = na_if(number_of_alien_or_invasive_alien_species_records, "Info not available"))
@@ -230,7 +329,7 @@ input_data %<>%
     ))
 ```
 
-Define `no_ias_records` as an ordered factor:
+Define `no_ias_records` as an ordered factor
 
 ```{r}
 input_data $ no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
@@ -261,7 +360,7 @@ no_ias_records <-
 Plot species of union concern:
 
 ```{r}
-png("no_ias_rec.png")
+png(filename = here::here("data", "processed", "no_ias_rec.png"))
 no_ias_rec <-
   ggplot(data = no_ias_records, 
        aes(x = no_ias_records,
@@ -276,7 +375,7 @@ no_ias_rec <-
 print(no_ias_rec)
 ```
 
-# Engagement method
+## Engagement method
 
 Separate engagement method on comma:
 
