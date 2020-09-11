@@ -399,12 +399,47 @@ input_data %<>% gather(
   na.rm = FALSE)
 ```
 
+Remove whitespace:
+
+```{r}
+input_data %<>% mutate(value = trimws(value, "both"))
+```
+
+Capitalize:
+
+```{r}
+input_data %<>% mutate(value = str_to_title(value))
+```
+
 Summarize
 
 ```{r}
-# union_concern <-
+engagement <-
   input_data %>% 
   select(value) %>% 
   group_by(value) %>% 
   summarize(records = n())
+engagement
+```
+
+Remove `e.g.` and `courses or workshops`:
+
+```{r}
+engagement %<>% filter(value != "E.g." | value != "Courses Or Workshops")
+```
+
+```{r}
+png(filename = here::here("data", "processed", "engagement_method.png"))
+engagement_method <-
+  ggplot(data = engagement, 
+       aes(x = value,
+           y = records)) +
+  geom_bar(colour="black",fill="#FF6666",width=0.8, stat="identity") + 
+  theme_classic() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.text.x = element_text(size = 20, angle=45, hjust=1),
+        axis.text.y = element_text(size = 20),
+        axis.title.y = element_text(size = 20)) +
+  ylab("Number of Projects") + xlab("") 
+print(engagement_method)
 ```
