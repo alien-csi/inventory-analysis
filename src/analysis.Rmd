@@ -116,6 +116,25 @@ Verify order:
 levels(input_data$no_ias_records)
 ```
 
+Generate separate datasets for analysis, where we remove all NA's:
+
+no_ias_records:
+
+```{r}
+no_ias_records_data <- 
+  input_data %>% filter(!is.na(no_ias_records))
+```
+
+
+
+number_of_publications 
+
+```{r}
+number_of_publications_data <- 
+  input_data %>% filter(!is.na(number_of_publications))
+```
+
+
 ### Primary Analysis
 
 The following variables are specified for analysis:
@@ -123,33 +142,17 @@ The following variables are specified for analysis:
 - `duration`
 - `design`
 - `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
 - `training_yn`
 - `map`
-- `active_informing`
 - `feedback`
-- `support`
-
-Inspect dependent variables on percentage of `NA`:
-
-```{r}
-input_data %>% 
-  select(design, duration, sm_yn, skills, contribution_frequency, guidelines, training_yn, design, map, active_informing, feedback, support) %>% 
-  map(~mean(is.na(.)))
-```
-
-Conclusion: variables `feedback` (22%) and `map` have the highest percentages of missing values
-
 
 Cumulative link model:
 
 ```{r}
 clm_records <- 
   clm(
-    no_ias_records ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + active_informing + feedback + support,
-    data = input_data)
+    no_ias_records ~ design + duration + sm_yn + training_yn + map + feedback,
+    data = no_ias_records_data)
 ```
 
 Model output:
@@ -158,9 +161,6 @@ Model output:
 summary(clm_records)
 ```
 
-"Readable" output (in terms of significance)
-NOTE: BE CAREFULL WITH THE INTERPRETATION, MUCH BE DOUBLE CHECKED!
-
 ```{r}
 anova(clm_records)
 ```
@@ -168,6 +168,11 @@ anova(clm_records)
 Conclusion: 
 - significant positive effect of map; significant negative effect of feedback and of low & no skill requirement
 - 64 deleted observations due to empty values in the dependent and independent variables
+
+```{r}
+ggpredict(model)
+```
+
 
 ### Secondary Analysis: Engagement
 
@@ -279,47 +284,49 @@ input_data$number_of_participants <- na_if(input_data$number_of_participants, "N
 input_data$number_of_participants <- na_if(input_data$number_of_participants, "NA") 
 ```
 
+Remove all NA's:
+
+```{r}
+number_of_participants_data <- 
+  input_data %>% filter(!is.na(number_of_participants))
+```
+
 Define `number_of_participants` as an ordered factor:
 
 ```{r}
-input_data$number_of_participants <- factor(input_data $ number_of_participants, ordered = TRUE)
+number_of_participants_data $ number_of_participants <- factor(number_of_participants_data $ number_of_participants, ordered = TRUE)
 ```
 
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_participants <- ordered (input_data$number_of_participants, levels = c("1 - 50", "51 - 100", 
+number_of_participants_data $ number_of_participants <- ordered (number_of_participants_data $ number_of_participants, levels = c("1 - 50", "51 - 100", 
 "101 - 500", "501 - 1000", "1001 - 2000", "2001 - 5000", "5001 - 10000", "> 10001"))
 ```
 
 Verify order:
 
 ```{r}
-levels(input_data$number_of_participants)
+levels(number_of_participants_data$number_of_participants)
 ```
 
 ### Primary Analysis
 
 The following variables are specified for analysis:
-- `design`
 - `duration`
+- `design`
 - `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
 - `training_yn`
 - `map`
-- `active_informing`
 - `feedback`
-- `support`
 
 Cumulative link model:
 
 ```{r}
 clm_participants <- 
   clm(
-    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
-    data = input_data)
+    number_of_participants ~ duration + design + sm_yn + training_yn + map + feedback,
+    data = number_of_participants_data)
 ```
 
 Model output:
@@ -331,10 +338,6 @@ summary(clm_participants)
 ```{r}
 anova(clm_participants)
 ```
-
-Conclusion: 
-- significant positive effect of map
-- 61 deleted observations
 
 ### Secondary Analysis: Engagement
 
@@ -420,22 +423,29 @@ input_data$number_of_publications <- na_if(input_data$number_of_publications, "N
 input_data$number_of_publications <- na_if(input_data$number_of_publications, "NA") 
 ```
 
+Remove all NA's:
+
+```{r}
+number_of_publications_data <- 
+  input_data %>% filter(!is.na(number_of_publications))
+```
+
 Define `number_of_publications` as an ordered factor:
 
 ```{r}
-input_data$number_of_publications <- factor(input_data $ number_of_publications, ordered = TRUE)
+number_of_publications_data $ number_of_publications <- factor(number_of_publications_data $ number_of_publications, ordered = TRUE)
 ```
 
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_publications <- ordered (input_data$number_of_publications, levels = c("0", "1 to 5", "6 to 10", "11 to 20", "21 - 50", "> 100"))
+number_of_publications_data $ number_of_publications <- ordered (number_of_publications_data $ number_of_publications, levels = c("0", "1 to 5", "6 to 10", "11 to 20", "21 - 50", "> 100"))
 ```
 
 Verify order:
 
 ```{r}
-str(input_data$number_of_publications)
+str(number_of_publications_data$number_of_publications)
 ```
 
 ### Primary Analysis
@@ -444,22 +454,17 @@ The following variables are specified for analysis:
 - `design`
 - `duration`
 - `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
 - `training_yn`
 - `map`
-- `active_informing`
 - `feedback`
-- `support`
 
 Cumulative link model:
 
 ```{r}
 clm_publications <- 
   clm(
-    number_of_publications ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
-    data = input_data)
+    number_of_publications ~ duration + design + sm_yn + training_yn + map  + feedback,
+    data = number_of_publications_data)
 ```
 
 Model output:
@@ -469,7 +474,7 @@ summary(clm_publications)
 ```  
 
 ```{r}
-anova(publications)
+anova(clm_publications)
 ```
 
 Conclusion:
