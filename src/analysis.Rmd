@@ -39,18 +39,10 @@ library(ordinal)        # To perform clm
 Create a data frame `input_data` from the source data:
  
 ```{r}
-input_data <- read_csv(file = here::here("data", "CLMData.csv")) 
+input_data <- read_csv(file = here::here("data", "processed_data.csv")) 
 ```
 
-Preview data:
-
-```{r}
-input_data %>% head(n = 5)
-```
-
-# Pre-processing
-
-## Tidy data
+# Clean data
 
 Remove empty rows (if present) and clean column headers:
 
@@ -66,7 +58,13 @@ Show cleaned column names:
 colnames(input_data)
 ```
 
-# Analysis
+Preview data:
+
+```{r}
+input_data %>% head(n = 5)
+```
+
+# Pre-processing
 
 ## Number of invasive alien records
 
@@ -116,21 +114,36 @@ Verify order:
 levels(input_data$no_ias_records)
 ```
 
-### Primary Analysis
 
-The following variables are specified for analysis:
-(Note: this was based on inspecting the models of Veronica)
-- `duration`
-- `design`
-- `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
-- `training_yn`
-- `map`
-- `active_informing`
-- `feedback`
-- `support`
+# Analysis
+
+## Exploratory analysis of selected project parameters
+
+Put here all relevant code related to the analyses
+
+## Geographic difference in project scope
+
+Put here all relevant code related to the analyses
+
+## Project performance
+
+project design
+use of social media
+level of skill required
+expected contribution frequencey
+provision of guidelines
+... training
+... sighting maps
+... active informing
+... feedback
+... support
+
+
+number of invasive alien records
+number of publications 
+number of attendees
+
+### Number of invasive alien records 
 
 Inspect dependent variables on percentage of `NA`:
 
@@ -140,7 +153,7 @@ input_data %>%
   map(~mean(is.na(.)))
 ```
 
-Conclusion: variables `feedback` (22%) and `map` have the highest percentages of missing values
+Conclusion: variables `feedback` (22%) and `map` (11%) have the highest percentages of missing values
 
 
 Cumulative link model:
@@ -148,7 +161,10 @@ Cumulative link model:
 ```{r}
 clm_records <- 
   clm(
-    no_ias_records ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + active_informing + feedback + support,
+    no_ias_records ~ 
+      duration + design + sm_yn + 
+      skills + contribution_frequency + guidelines + 
+      training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
@@ -158,8 +174,7 @@ Model output:
 summary(clm_records)
 ```
 
-"Readable" output (in terms of significance)
-NOTE: BE CAREFULL WITH THE INTERPRETATION, MUCH BE DOUBLE CHECKED!
+Output with p-values:
 
 ```{r}
 anova(clm_records)
@@ -168,6 +183,9 @@ anova(clm_records)
 Conclusion: 
 - significant positive effect of map; significant negative effect of feedback and of low & no skill requirement
 - 64 deleted observations due to empty values in the dependent and independent variables
+
+
+## No IAS records
 
 ### Secondary Analysis: Engagement
 
