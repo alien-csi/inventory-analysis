@@ -32,6 +32,8 @@ library(here)           # To find files
 library(readxl)         # To read Excel files
 library(janitor)        # To clean input data
 library(ordinal)        # To perform clm
+library(dplyr)          # To clean input data
+library(splitstackshape)# To split rows for Chisq test
 ```
 
 # Read source data
@@ -64,9 +66,207 @@ Preview data:
 input_data %>% head(n = 5)
 ```
 
-# Pre-processing
+# Chisq Models
 
-## Number of invasive alien records
+## Pre-processing
+
+Check source data:
+
+```{r}
+print(str(input_data))
+table(input_data$region)
+table(input_data$taxa)
+table(input_data$environment)
+table(input_data$audience)
+```
+
+
+### Audience/Taxa
+
+Create data frame:
+
+```{r}
+df_aud_tax = data.frame(input_data$audience, input_data$taxa)
+df_aud_tax
+```
+
+Split rows with multiple answers:
+
+```{r}
+df_aud_tax <- cSplit(df_aud_tax, "input_data.audience", sep=",", direction="long")
+df_aud_tax <- cSplit(df_aud_tax, "input_data.taxa", sep=",", direction="long")
+```
+
+Check data frame:
+
+```{r}
+table(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
+```
+
+
+### Audience/Environment
+
+Create data frame:
+
+```{r}
+df_aud_env = data.frame(input_data$audience, input_data$environment)
+df_aud_env
+```
+
+Split rows with multiple answers:
+
+```{r}
+df_aud_env <- cSplit(df_aud_env, "input_data.audience", sep=",", direction="long")
+df_aud_env <- cSplit(df_aud_env, "input_data.environment", sep=",", direction="long")
+```
+
+Check data frame:
+
+```{r}
+table(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
+```
+
+
+### Region/Audience
+
+Create data frame:
+
+```{r}
+df_reg_aud = data.frame(input_data$region, input_data$audience)
+df_reg_aud
+```
+
+Remove rows without region:
+
+```{r}
+df_reg_aud <- df_reg_aud[-c(11, 29, 58),]
+```
+
+Split rows with multiple answers:
+
+```{r}
+df_reg_aud <- cSplit(df_reg_aud, "input_data.region", sep=",", direction="long")
+df_reg_aud <- cSplit(df_reg_aud, "input_data.audience", sep=",", direction="long")
+```
+
+Check data frame:
+
+```{r}
+table(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
+```
+
+
+### Region/Taxa
+
+Create data frame:
+
+```{r}
+df_reg_tax = data.frame(input_data$region, input_data$taxa)
+df_reg_tax
+```
+
+Remove rows without region:
+
+```{r}
+df_reg_tax <- df_reg_tax[-c(11, 29, 58),]
+```
+
+Split rows with multiple answers:
+
+```{r}
+df_reg_tax <- cSplit(df_reg_tax, "input_data.region", sep=",", direction="long")
+df_reg_tax <- cSplit(df_reg_tax, "input_data.taxa", sep=",", direction="long")
+```
+
+Check data frame:
+
+```{r}
+table(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
+```
+
+
+### Region/Environment
+
+Create data frame:
+
+```{r}
+df_reg_env = data.frame(input_data$region, input_data$environment)
+df_reg_env
+```
+
+Remove rows without region:
+
+```{r}
+df_reg_env <- df_reg_env[-c(11, 29, 58),]
+```
+
+Split rows with multiple answers:
+
+```{r}
+df_reg_env <- cSplit(df_reg_env, "input_data.region", sep=",", direction="long")
+df_reg_env <- cSplit(df_reg_env, "input_data.environment", sep=",", direction="long")
+```
+
+Check data frame:
+
+```{r}
+table(df_reg_env$input_data.region, df_reg_env$input_data.environment)
+```
+
+
+## Analysis
+
+### Audience/Taxa
+
+Chi square test:
+
+```{r}
+chisq.test(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
+```
+
+
+### Audience/Environment
+
+Chi square test:
+
+```{r}
+chisq.test(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
+```
+
+
+### Region/Audience
+
+Chi square test:
+
+```{r}
+chisq.test(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
+```
+
+
+### Region/Taxa
+
+Chi square test:
+
+```{r}
+chisq.test(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
+```
+
+
+### Region/Environment
+
+Chi square test:
+
+```{r}
+chisq.test(df_reg_env$input_data.region, df_reg_env$input_data.environment)
+```
+
+
+
+# Culmulative Links Models
+
+## Pre-processing
+
+### Number of invasive alien records
 
 Rename variable `number_of_alien_or_invasive_alien_species_records` to `no_ias_records` to simplify the analysis:
 
@@ -114,7 +314,7 @@ Verify order:
 levels(input_data$no_ias_records)
 ```
 
-## Number of participants
+### Number of participants
 
 Inspect different values of `number_of_participants`:
 
@@ -150,118 +350,6 @@ levels(input_data$number_of_participants)
 ```
 
 
-## Number of publications
-
-# Analysis
-
-## Exploratory analysis of selected project parameters
-
-We first test for association between target audience and environment
-
-Environment x Audience
-Regions
-Aim
-Data type
-Taxon
-
-## Geographic difference in project scope
-
-Put here all relevant code related to the analyses
-
-## Project performance
-
-### Inspect independent variables
-
-The following independent variables were selected for the analyses:
-
-- duration (`duration`)
-- project design (`design`)
-- use of social media (`sm_yn`)
-- level of skill required (`skills`)
-- expected contribution frequencey (`contribution_frequency`)
-- provision of guidelines (`guidelines`)
-- training (`training_yn`)
-- sighting maps (`map`)
-- active informing (`active_informing`)
-- feedback (`feedback`)
-- support (`support`) 
-
-Inspect dependent variables on percentage of `NA`:
-
-```{r}
-input_data %>% 
-  select(duration, design, sm_yn,  skills, contribution_frequency, guidelines, training_yn, map, active_informing, feedback, support) %>% 
-  map(~mean(is.na(.)))
-```
-
-### Number of invasive alien records
-
-
-Cumulative link model:
-
-```{r}
-clm_ias_records <- 
-  clm(
-    no_ias_records ~ 
-      duration + design + sm_yn + 
-      skills + contribution_frequency + guidelines + 
-      training_yn + map + active_informing + feedback + 
-      support,
-    data = input_data)
-```
-
-Model output:
-
-```{r}
-summary(clm_records)
-```
-Output with p-values:
-
-```{r}
-anova(clm_records)
-```
-
-
-### Number of participants
-
-Cumulative Link Model
-
-The following variables are specified for analysis:
-- `design`
-- `duration`
-- `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
-- `training_yn`
-- `map`
-- `active_informing`
-- `feedback`
-- `support`
-
-Cumulative link model:
-
-```{r}
-clm_participants <- 
-  clm(
-    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
-    data = input_data)
-```
-
-Model output:
-
-```{r}
-summary(clm_participants)
-```  
-
-```{r}
-anova(clm_participants)
-```
-
-Conclusion: 
-- significant positive effect of map
-- 61 deleted observations
-
 ### Number of publications
 
 Inspect different values of `number_of_publications`:
@@ -296,9 +384,125 @@ Verify order:
 str(input_data$number_of_publications)
 ```
 
-### Cumulative Link Model
+
+
+## Analysis
+
+### Inspect independent variables
+
+The following independent variables were selected for the analyses:
+
+- duration (`duration`)
+- project design (`design`)
+- use of social media (`sm_yn`)
+- level of skill required (`skills`)
+- expected contribution frequencey (`contribution_frequency`)
+- provision of guidelines (`guidelines`)
+- training (`training_yn`)
+- sighting maps (`map`)
+- active informing (`active_informing`)
+- feedback (`feedback`)
+- support (`support`) 
+
+Inspect dependent variables on percentage of `NA`:
+
+```{r}
+input_data %>% 
+  select(duration, design, sm_yn,  skills, contribution_frequency, guidelines, training_yn, map, active_informing, feedback, support) %>% 
+  map(~mean(is.na(.)))
+```
+
+### Number of invasive alien records
 
 The following variables are specified for analysis:
+
+- `design`
+- `duration`
+- `sm_yn`
+- `skills`
+- `contribution_frequency`
+- `guidelines`
+- `training_yn`
+- `map`
+- `active_informing`
+- `feedback`
+- `support`
+
+Cumulative Link Model:
+
+```{r}
+clm_ias_records <- 
+  clm(
+    no_ias_records ~ 
+      duration + design + sm_yn + 
+      skills + contribution_frequency + guidelines + 
+      training_yn + map + active_informing + feedback + 
+      support,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_records)
+```
+
+Output with p-values:
+
+```{r}
+anova(clm_records)
+```
+
+
+### Number of participants
+
+Cumulative Link Model
+
+The following variables are specified for analysis:
+
+- `design`
+- `duration`
+- `sm_yn`
+- `skills`
+- `contribution_frequency`
+- `guidelines`
+- `training_yn`
+- `map`
+- `active_informing`
+- `feedback`
+- `support`
+
+Cumulative link model:
+
+```{r}
+clm_participants <- 
+  clm(
+    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_participants)
+```  
+
+Output with p-values:
+
+```{r}
+anova(clm_participants)
+```
+
+Conclusion: 
+- significant positive effect of map
+- 61 deleted observations
+
+### Number of publications
+
+Cumulative Link Model
+
+The following variables are specified for analysis:
+
 - `design`
 - `duration`
 - `sm_yn`
@@ -325,6 +529,8 @@ Model output:
 ```{r}
 summary(clm_publications)
 ```  
+
+Output with p-values:
 
 ```{r}
 anova(publications)
