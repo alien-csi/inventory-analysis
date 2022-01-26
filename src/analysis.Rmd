@@ -182,7 +182,6 @@ The following independent variables were selected for the analyses:
 - provision of guidelines (`guidelines`)
 - training (`training_yn`)
 - sighting maps (`map`)
-- active informing (`active_informing`)
 - feedback (`feedback`)
 - support (`support`) 
 
@@ -190,7 +189,7 @@ Inspect dependent variables on percentage of `NA`:
 
 ```{r}
 input_data %>% 
-  select(duration, design, sm_yn,  skills, contribution_frequency, guidelines, training_yn, map, active_informing, feedback, support) %>% 
+  select(duration, design, sm_yn,  skills, contribution_frequency, guidelines, training_yn, map, feedback, support) %>% 
   map(~mean(is.na(.)))
 ```
 
@@ -205,7 +204,7 @@ clm_ias_records <-
     no_ias_records ~ 
       duration + design + sm_yn + 
       skills + contribution_frequency + guidelines + 
-      training_yn + map + active_informing + feedback + 
+      training_yn + map + feedback + 
       support,
     data = input_data)
 ```
@@ -213,13 +212,17 @@ clm_ias_records <-
 Model output:
 
 ```{r}
-summary(clm_records)
+summary(clm_ias_records)
 ```
 Output with p-values:
 
 ```{r}
-anova(clm_records)
+anova(clm_ias_records)
 ```
+
+  - significant positive effect of duration and provision of map
+-significant negative effect of limited/no prior skills/knowledge and provision of feedback
+- 64 deleted observations
 
 
 ### Number of participants
@@ -235,7 +238,6 @@ The following variables are specified for analysis:
 - `guidelines`
 - `training_yn`
 - `map`
-- `active_informing`
 - `feedback`
 - `support`
 
@@ -244,7 +246,7 @@ Cumulative link model:
 ```{r}
 clm_participants <- 
   clm(
-    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + feedback,
     data = input_data)
 ```
 
@@ -259,8 +261,8 @@ anova(clm_participants)
 ```
 
 Conclusion: 
-- significant positive effect of map
-- 61 deleted observations
+  - significant positive effect of duration and map
+- 60 deleted observations
 
 ### Number of publications
 
@@ -307,7 +309,6 @@ The following variables are specified for analysis:
 - `guidelines`
 - `training_yn`
 - `map`
-- `active_informing`
 - `feedback`
 - `support`
 
@@ -316,7 +317,7 @@ Cumulative link model:
 ```{r}
 clm_publications <- 
   clm(
-    number_of_publications ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    number_of_publications ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + feedback + support,
     data = input_data)
 ```
 
@@ -327,9 +328,10 @@ summary(clm_publications)
 ```  
 
 ```{r}
-anova(publications)
+anova(clm_publications)
 ```
 
 Conclusion:
-- significant positive effect of training and map; significant negative effect of support and limited or no skill requirement
-- 63 deleted observations
+  - significant positive effect of duration, social media, training and feedback
+  - -significant negative effect of limited/no prior skills, support
+-58 deleted observations
