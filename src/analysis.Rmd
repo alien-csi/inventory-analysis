@@ -39,7 +39,7 @@ library(ordinal)        # To perform clm
 Create a data frame `input_data` from the source data:
  
 ```{r}
-input_data <- read_csv(file = here::here("data", "processed_data.csv")) 
+input_data <- read_csv(file = here::here("data", "processed_data_2022.csv")) 
 ```
 
 # Clean data
@@ -213,14 +213,18 @@ clm_ias_records <-
 Model output:
 
 ```{r}
-summary(clm_records)
+summary(clm_ias_records)
 ```
 Output with p-values:
 
 ```{r}
-anova(clm_records)
+anova(clm_ias_records)
 ```
 
+Conclusion:
+- significant positive effect of duration and provision of map
+- significant negative effect of limited/no prior skills/knowledge and provision of feedback
+- 64 deleted observations
 
 ### Number of participants
 
@@ -244,7 +248,7 @@ Cumulative link model:
 ```{r}
 clm_participants <- 
   clm(
-    number_of_participants ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    number_of_participants ~ duration + design + sm_yn + skills + guidelines + training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
@@ -259,7 +263,7 @@ anova(clm_participants)
 ```
 
 Conclusion: 
-- significant positive effect of map
+- significant positive effect of duration and map
 - 61 deleted observations
 
 ### Number of publications
@@ -316,7 +320,7 @@ Cumulative link model:
 ```{r}
 clm_publications <- 
   clm(
-    number_of_publications ~ duration + design + sm_yn + species_id + guidelines + training_yn + map + active_informing + feedback,
+    number_of_publications ~ duration + design + sm_yn + skills + guidelines + training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
@@ -327,9 +331,10 @@ summary(clm_publications)
 ```  
 
 ```{r}
-anova(publications)
+anova(clm_publications)
 ```
 
 Conclusion:
-- significant positive effect of training and map; significant negative effect of support and limited or no skill requirement
-- 63 deleted observations
+- significant positive effect of duration, social media, guidelines, training, map and feedback
+-significant negative effect of limited/no prior skills, support
+-59 deleted observations
