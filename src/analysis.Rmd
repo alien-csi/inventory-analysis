@@ -481,7 +481,7 @@ Cumulative link model:
 ```{r}
 clm_participants <- 
   clm(
-    number_of_participants ~ duration + design + sm_yn + skills + guidelines + training_yn + map + active_informing + feedback + support,
+    number_of_participants ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
@@ -524,7 +524,7 @@ Cumulative link model:
 ```{r}
 clm_publications <- 
   clm(
-    number_of_publications ~ duration + design + sm_yn + skills + guidelines + training_yn + map + active_informing + feedback + support,
+    number_of_publications ~ duration + design + sm_yn + skills + contribution_frequency + guidelines + training_yn + map + active_informing + feedback + support,
     data = input_data)
 ```
 
