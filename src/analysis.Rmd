@@ -41,7 +41,7 @@ library(splitstackshape)# To split rows for Chisq test
 Create a data frame `input_data` from the source data:
  
 ```{r}
-input_data <- read_csv(file = here::here("data", "processed_data_2022.csv")) 
+input_data <- read_csv(file = here::here("data", "processed_data.csv")) 
 ```
 
 # Clean data
