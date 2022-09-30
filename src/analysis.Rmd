@@ -261,7 +261,6 @@ chisq.test(df_reg_env$input_data.region, df_reg_env$input_data.environment)
 ```
 
 
-
 # Culmulative Links Models
 
 ## Pre-processing
@@ -292,7 +291,7 @@ input_data$no_ias_records <- na_if(input_data$no_ias_records, "NA")
 Define `no_ias_records` as an ordered factor:
 
 ```{r}
-input_data$no_ias_records <- factor(input_data $ no_ias_records, ordered = TRUE)
+input_data$no_ias_records <- factor(input_data$no_ias_records, ordered = TRUE)
 ```
 
 Re-order `no_ias_records`:
@@ -300,12 +299,17 @@ Re-order `no_ias_records`:
 ```{r}
 input_data$no_ias_records <- 
   ordered(input_data$no_ias_records, 
-    levels = c("1 - 50", "51 - 100",
-                "101 - 500", "501 - 1000", 
-                "1001 - 5000", "5001 - 10000",
-                "10001 - 50000", "50001 - 100000", 
-                "100001 - 500000","500001 - 1000000",
-                "> 1000001"))
+          levels = c("1 - 50", 
+                     "51 - 100",
+                     "101 - 500",
+                     "501 - 1000",
+                     "1001 - 5000",
+                     "5001 - 10000",
+                     "10001 - 50000",
+                     "50001 - 100000",
+                     "100001 - 500000",
+                     "500001 - 1000000",
+                     "> 1000001"))
 ```
 
 Verify order:
