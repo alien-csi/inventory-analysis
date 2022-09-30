@@ -277,7 +277,7 @@ input_data <- input_data %>%
 Inspect different values of `no_ias_records`:
 
 ```{r}
-unique(input_data$no_ias_records)
+table(input_data$no_ias_records, useNA = "always")
 ```
 
 Change `Info not available` and `Not applicable` to NA:
@@ -324,7 +324,7 @@ levels(input_data$no_ias_records)
 Inspect different values of `number_of_participants`:
 
 ```{r}
-unique(input_data$number_of_participants)
+table(input_data$number_of_participants, useNA = "always")
 ```
 
 Change `Info not available` and `Not applicable` to NA:
@@ -368,7 +368,7 @@ levels(input_data$number_of_participants)
 Inspect different values of `number_of_publications`:
 
 ```{r}
-unique(input_data$number_of_publications)
+table(input_data$number_of_publications, useNA = "always")
 ```
 
 Change `Unknown` and `Not applicable` to NA:
