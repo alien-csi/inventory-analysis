@@ -301,12 +301,13 @@ input_data$no_ias_records <-
   ordered(input_data$no_ias_records, 
           levels = c("1 - 50", 
                      "51 - 100",
-                     "101 - 500",
-                     "501 - 1000",
-                     "1001 - 5000",
+                     "101 - 500", 
+                     "501 - 1000", 
+                     "1001 - 2000", 
+                     "2001 - 5000", 
                      "5001 - 10000",
-                     "10001 - 50000",
-                     "50001 - 100000",
+                     "10001 - 50000", 
+                     "50001 - 100000", 
                      "100001 - 500000",
                      "500001 - 1000000",
                      "> 1000001"))
@@ -343,8 +344,16 @@ input_data$number_of_participants <- factor(input_data $ number_of_participants,
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_participants <- ordered (input_data$number_of_participants, levels = c("1 - 50", "51 - 100", 
-"101 - 500", "501 - 1000", "1001 - 2000", "2001 - 5000", "5001 - 10000", "> 10001"))
+input_data$number_of_participants <- 
+  ordered (input_data$number_of_participants, 
+           levels = c("1 - 50", 
+                      "51 - 100", 
+                      "101 - 500", 
+                      "501 - 1000", 
+                      "1001 - 2000", 
+                      "2001 - 5000", 
+                      "5001 - 10000", 
+                      "> 10001"))
 ```
 
 Verify order:
@@ -379,7 +388,14 @@ input_data$number_of_publications <- factor(input_data $ number_of_publications,
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_publications <- ordered (input_data$number_of_publications, levels = c("0", "1 to 5", "6 to 10", "11 to 20", "21 - 50", "> 100"))
+input_data$number_of_publications <- 
+  ordered (input_data$number_of_publications, 
+           levels = c("0", 
+                      "1 to 5", 
+                      "6 to 10", 
+                      "11 to 20", 
+                      "21 - 50", 
+                      "> 100"))
 ```
 
 Verify order:
