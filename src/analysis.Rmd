@@ -346,14 +346,14 @@ Re-order `number_of_participants`:
 ```{r}
 input_data$number_of_participants <- 
   ordered (input_data$number_of_participants, 
-           levels = c("1 - 50", 
-                      "51 - 100", 
-                      "101 - 500", 
-                      "501 - 1000", 
-                      "1001 - 2000", 
-                      "2001 - 5000", 
-                      "5001 - 10000", 
-                      "> 10001"))
+           levels = c("1 - 50",
+                      "51 - 100",
+                      "101 - 500",
+                      "501 - 1000",
+                      "1001 - 2000",
+                      "2001 - 5000",
+                      "5001 - 10000",
+                      "> 10000"))
 ```
 
 Verify order:
