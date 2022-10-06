@@ -1,0 +1,9 @@
+Number of Publications	Number of Projects
+0	22
+1 - 5	22
+6 - 10	8
+11 - 20	6
+21 - 50	3
+> 100	1
+Unknown	28
+Not Applicable	13

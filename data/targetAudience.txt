@@ -1,0 +1,8 @@
+targetAudience	max	min	num	percentage
+Anyone	100	0	92	89.32
+Scientists	100	0	27	26.21
+School students	100	0	19	18.45
+Fishers	100	0	18	17.48
+University students	100	0	15	14.56
+Land managers	100	0	13	12.62
+Other	100	0	16	15.53

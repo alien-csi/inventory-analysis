@@ -142,6 +142,7 @@ dev.off()
 
 ## Figure 3b: Number of records vs number of projects
 
+
 Define order of factors in `numberOfParticiProjects`:
 
 ```{r}
@@ -188,7 +189,7 @@ print(b)
 dev.off()
 ```
 
-## Figure 3c: Number of publications vs number of projects
+## Figure 3c: Number of publications vs number of projects:
 
 Define order of factors in `numberOfPubsProjects`:
 
@@ -230,7 +231,9 @@ print(c)
 dev.off()
 ```
 
-## Figure 3d: Plot Usage Apps - Number of apps used
+
+
+## Figure 3d: Plot Usage Apps - Number of apps used:
 
 ```{r}
 p <- ggplot(data=appsProjects, 

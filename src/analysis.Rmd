@@ -1,5 +1,5 @@
 ---
-title: "Analysis"
+title: "Code to reproduce analyses"
 author:
 - Veronica Price-Jones
 - Lien Reyserhove
@@ -66,22 +66,9 @@ Preview data:
 input_data %>% head(n = 5)
 ```
 
-# Chisq Models
+# Fisher's Exact tests
 
-## Pre-processing
-
-Check source data:
-
-```{r}
-print(str(input_data))
-table(input_data$region)
-table(input_data$taxa)
-table(input_data$environment)
-table(input_data$audience)
-```
-
-
-### Audience/Taxa
+## Audience/Taxa
 
 Create data frame:
 
@@ -97,14 +84,14 @@ df_aud_tax <- cSplit(df_aud_tax, "input_data.audience", sep=",", direction="long
 df_aud_tax <- cSplit(df_aud_tax, "input_data.taxa", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
+fisher.test(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa,
+            simulate.p.value=TRUE)
 ```
 
-
-### Audience/Environment
+## Audience/Environment
 
 Create data frame:
 
@@ -120,14 +107,14 @@ df_aud_env <- cSplit(df_aud_env, "input_data.audience", sep=",", direction="long
 df_aud_env <- cSplit(df_aud_env, "input_data.environment", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
+fisher.test(df_aud_env$input_data.audience, df_aud_env$input_data.environment,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Audience
+## Region/Audience
 
 Create data frame:
 
@@ -149,14 +136,14 @@ df_reg_aud <- cSplit(df_reg_aud, "input_data.region", sep=",", direction="long")
 df_reg_aud <- cSplit(df_reg_aud, "input_data.audience", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
+fisher.test(df_reg_aud$input_data.region, df_reg_aud$input_data.audience,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Taxa
+## Region/Taxa
 
 Create data frame:
 
@@ -178,14 +165,14 @@ df_reg_tax <- cSplit(df_reg_tax, "input_data.region", sep=",", direction="long")
 df_reg_tax <- cSplit(df_reg_tax, "input_data.taxa", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
+fisher.test(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Environment
+## Region/Environment
 
 Create data frame:
 
@@ -207,59 +194,18 @@ df_reg_env <- cSplit(df_reg_env, "input_data.region", sep=",", direction="long")
 df_reg_env <- cSplit(df_reg_env, "input_data.environment", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_env$input_data.region, df_reg_env$input_data.environment)
+fisher.test(df_reg_env$input_data.region, df_reg_env$input_data.environment,
+            simulate.p.value=TRUE)
 ```
-
-
-## Analysis
-
-### Audience/Taxa
-
-Chi square test:
-
-```{r}
-chisq.test(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
-```
-
-
-### Audience/Environment
-
-Chi square test:
-
-```{r}
-chisq.test(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
-```
-
-
-### Region/Audience
-
-Chi square test:
-
-```{r}
-chisq.test(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
-```
-
-
-### Region/Taxa
-
-Chi square test:
-
-```{r}
-chisq.test(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
-```
-
-
-### Region/Environment
 
 Chi square test:
 
 ```{r}
 chisq.test(df_reg_env$input_data.region, df_reg_env$input_data.environment)
 ```
-
 
 # Culmulative Links Models
 
@@ -277,7 +223,7 @@ input_data <- input_data %>%
 Inspect different values of `no_ias_records`:
 
 ```{r}
-unique(input_data$no_ias_records)
+table(input_data$no_ias_records, useNA = "always")
 ```
 
 Change `Info not available` and `Not applicable` to NA:
@@ -301,12 +247,13 @@ input_data$no_ias_records <-
   ordered(input_data$no_ias_records, 
           levels = c("1 - 50", 
                      "51 - 100",
-                     "101 - 500",
-                     "501 - 1000",
-                     "1001 - 5000",
+                     "101 - 500", 
+                     "501 - 1000", 
+                     "1001 - 2000", 
+                     "2001 - 5000", 
                      "5001 - 10000",
-                     "10001 - 50000",
-                     "50001 - 100000",
+                     "10001 - 50000", 
+                     "50001 - 100000", 
                      "100001 - 500000",
                      "500001 - 1000000",
                      "> 1000001"))
@@ -323,7 +270,7 @@ levels(input_data$no_ias_records)
 Inspect different values of `number_of_participants`:
 
 ```{r}
-unique(input_data$number_of_participants)
+table(input_data$number_of_participants, useNA = "always")
 ```
 
 Change `Info not available` and `Not applicable` to NA:
@@ -343,8 +290,16 @@ input_data$number_of_participants <- factor(input_data $ number_of_participants,
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_participants <- ordered (input_data$number_of_participants, levels = c("1 - 50", "51 - 100", 
-"101 - 500", "501 - 1000", "1001 - 2000", "2001 - 5000", "5001 - 10000", "> 10001"))
+input_data$number_of_participants <- 
+  ordered (input_data$number_of_participants, 
+           levels = c("1 - 50",
+                      "51 - 100",
+                      "101 - 500",
+                      "501 - 1000",
+                      "1001 - 2000",
+                      "2001 - 5000",
+                      "5001 - 10000",
+                      "> 10000"))
 ```
 
 Verify order:
@@ -359,7 +314,7 @@ levels(input_data$number_of_participants)
 Inspect different values of `number_of_publications`:
 
 ```{r}
-unique(input_data$number_of_publications)
+table(input_data$number_of_publications, useNA = "always")
 ```
 
 Change `Unknown` and `Not applicable` to NA:
@@ -379,7 +334,14 @@ input_data$number_of_publications <- factor(input_data $ number_of_publications,
 Re-order `number_of_participants`:
 
 ```{r}
-input_data$number_of_publications <- ordered (input_data$number_of_publications, levels = c("0", "1 to 5", "6 to 10", "11 to 20", "21 - 50", "> 100"))
+input_data$number_of_publications <- 
+  ordered (input_data$number_of_publications, 
+           levels = c("0", 
+                      "1 to 5", 
+                      "6 to 10", 
+                      "11 to 20", 
+                      "21 - 50", 
+                      "> 100"))
 ```
 
 Verify order:

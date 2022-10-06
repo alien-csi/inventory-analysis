@@ -1,0 +1,9 @@
+Usage of App	Number of Projects
+0%	5
+1-5%	1
+6-10%	1
+11-25%	4
+51-75%	4
+76-100%	1
+N/A	51
+Unknown	35
