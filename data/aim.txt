@@ -1,0 +1,12 @@
+aim	max	min	num	percentage
+Mapping of alien species	100	0	78	75.73
+Monitoring or surveillance	100	0	68	66.02
+Awareness raising	100	0	61	59.22
+Early warning	100	0	52	50.49
+Education	100	0	51	49.51
+Engagement	100	0	40	38.83
+Prevention	100	0	29	28.16
+Effectiveness of management	100	0	21	20.39
+Testing scientific hypotheses	100	0	19	18.45
+Fun	100	0	8	7.77
+Other	100	0	9	8.74

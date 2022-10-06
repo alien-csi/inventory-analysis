@@ -1,0 +1,262 @@
+---
+title: "Code to reproduce barplots"
+author:
+- Quentin Groom  
+- Veronica Price-Jones
+- Lien Reyserhove
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+subtitle: ''
+---
+
+# General settings
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Load libraries:
+
+```{r}
+library(tidyverse)      # To do data science
+library(magrittr)       # To use %<>% pipes
+library(here)           # To find files
+library(readxl)         # To read Excel files
+library(dplyr)          # To clean input data
+library(readr)
+library(janitor)
+```
+
+# Import files
+
+```{r}
+appsProjects <- 
+  read_delim(
+    file = here::here("data", "appsProjects.txt"),
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+                           
+                           
+newProjectsThatMapAlienSpecies <- 
+  read_delim(
+    file = here::here("data", "newProjectsThatMapAlienSpecies.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+newProjectsWithPolicyRelevance <- 
+  read_delim(
+    file = here::here("data", "newProjectsWithPolicyRelevance.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfNewProjects <- 
+  read_delim(
+    file = here::here("data","numberOfNewProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfParticiProjects <- 
+  read_delim(
+    file = here::here("data","numberOfParticiProjects.txt"),
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfPubsProjects <- 
+  read_delim(
+    file = here::here("data","numberOfPubsProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfRecsProjects <- 
+  read_delim(
+    here::here("data","numberOfRecsProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+```
+
+Clean names:
+
+```{r}
+appsProjects <- appsProjects %>% clean_names()
+numberOfParticiProjects <- numberOfParticiProjects %>% clean_names()
+numberOfRecsProjects <- numberOfRecsProjects %>% clean_names()
+numberOfPubsProjects <- numberOfPubsProjects %>% clean_names()
+```
+
+# Generate plots
+
+## Figure 3a: Number of participants vs number of projects
+
+Define order of factors in `numberOfParticiProjects`:
+
+```{r}
+numberOfParticiProjects$number_of_participants <- factor(numberOfParticiProjects$number_of_participants, ordered = TRUE)
+```
+
+Re-order `number_of_participants`:
+
+```{r}
+numberOfParticiProjects$number_of_participants <- 
+  ordered(numberOfParticiProjects$number_of_participants, 
+          levels = c("1 - 50", 
+                     "51 - 100",
+                     "101 - 500", 
+                     "501 - 1000", 
+                     "1001 - 2000", 
+                     "2001 - 5000", 
+                     "5001 - 10 000",
+                     "> 10 001",
+                     "Info not available",
+                     "Not applicable"))
+```
+
+Produce plot:
+
+```{r}
+a <- ggplot(data = numberOfParticiProjects, 
+            aes(x = number_of_participants, y = number_of_projects)) +
+  geom_bar(stat="identity") +
+  labs(x = "number of participants", y = "number of projects") +
+  theme_classic() +
+  theme(
+    text = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+png(filename = "figure3a.png",
+    width = 890, height = 780)
+
+print(a)
+dev.off()
+```
+
+## Figure 3b: Number of records vs number of projects:
+
+Define order of factors in `numberOfParticiProjects`:
+
+```{r}
+numberOfRecsProjects$number_of_records <- factor(numberOfRecsProjects$number_of_records, ordered = TRUE)
+```
+
+Re-order `number_of_participants`:
+
+```{r}
+numberOfRecsProjects$number_of_records <- 
+  ordered(numberOfRecsProjects$number_of_records, 
+          levels = c("1 - 50", 
+                     "51 - 100",
+                     "101 - 500", 
+                     "501 - 1000", 
+                     "1001 - 2000", 
+                     "2001 - 5000", 
+                     "5001 - 10 000",
+                     "10 001 - 50 000",
+                     "50 001 - 100 000",
+                     "100 001 - 500 000",
+                     "500 001 - 1 000 000",
+                     "> 1 000 001",
+                     "Information not available",
+                     "Not applicable"))
+```
+
+```{r}
+b <- ggplot(data = numberOfRecsProjects, 
+            aes(x = number_of_records, y = number_of_projects)) +
+  geom_bar(stat="identity") +
+  labs(x = "number of records", y = "number of projects") +
+  theme_classic() +
+  theme(
+    text = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+png(filename = "figure3b.png",
+    width = 890, height = 780)
+
+print(b)
+dev.off()
+```
+
+## Figure 3c: Number of publications vs number of projects:
+
+Define order of factors in `numberOfParticiProjects`:
+
+```{r}
+numberOfRecsProjects$number_of_records <- factor(numberOfRecsProjects$number_of_records, ordered = TRUE)
+```
+
+Re-order `number_of_participants`:
+
+```{r}
+numberOfRecsProjects$number_of_records <- 
+  ordered(numberOfRecsProjects$number_of_records, 
+          levels = c("1 - 50", 
+                     "51 - 100",
+                     "101 - 500", 
+                     "501 - 1000", 
+                     "1001 - 2000", 
+                     "2001 - 5000", 
+                     "5001 - 10 000",
+                     "10 001 - 50 000",
+                     "50 001 - 100 000",
+                     "100 001 - 500 000",
+                     "500 001 - 1 000 000",
+                     "> 1 000 001",
+                     "Information not available",
+                     "Not applicable"))
+```
+
+```{r}
+b <- ggplot(data = numberOfRecsProjects, 
+            aes(x = number_of_records, y = number_of_projects)) +
+  geom_bar(stat="identity") +
+  labs(x = "number of records", y = "number of projects") +
+  theme_classic() +
+  theme(
+    text = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+png(filename = "figure3b.png",
+    width = 890, height = 780)
+
+print(b)
+dev.off()
+```
+
+## Figure 3d: Plot Usage Apps - Number of apps used:
+
+```{r}
+p <- ggplot(data=appsProjects, 
+            aes(x=`Number of Projects`, 
+                y=`Usage of App`)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  theme_classic() +
+  theme(
+    text = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+
+png(filename = "figure3d.png",
+    width = 890, height = 780)
+
+print(p)
+dev.off()
+
+```
+

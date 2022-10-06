@@ -1,0 +1,10 @@
+targetTaxa	max	min	num	percentage
+Plants	40	0	31	31
+Insects	40	0	26	26
+All	40	0	21	21
+Mammals	40	0	14	14
+Fish	40	0	13	13
+Crustaceans	40	0	13	13
+Other	40	0	13	13
+Birds	40	0	6	6
+Molluscs	40	0	4	4
