@@ -1,5 +1,5 @@
 ---
-title: "Analysis"
+title: "Code to reproduce analyses"
 author:
 - Veronica Price-Jones
 - Lien Reyserhove
@@ -66,22 +66,9 @@ Preview data:
 input_data %>% head(n = 5)
 ```
 
-# Chisq Models
+# Fisher's Exact tests
 
-## Pre-processing
-
-Check source data:
-
-```{r}
-print(str(input_data))
-table(input_data$region)
-table(input_data$taxa)
-table(input_data$environment)
-table(input_data$audience)
-```
-
-
-### Audience/Taxa
+## Audience/Taxa
 
 Create data frame:
 
@@ -97,14 +84,14 @@ df_aud_tax <- cSplit(df_aud_tax, "input_data.audience", sep=",", direction="long
 df_aud_tax <- cSplit(df_aud_tax, "input_data.taxa", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
+fisher.test(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa,
+            simulate.p.value=TRUE)
 ```
 
-
-### Audience/Environment
+## Audience/Environment
 
 Create data frame:
 
@@ -120,14 +107,14 @@ df_aud_env <- cSplit(df_aud_env, "input_data.audience", sep=",", direction="long
 df_aud_env <- cSplit(df_aud_env, "input_data.environment", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
+fisher.test(df_aud_env$input_data.audience, df_aud_env$input_data.environment,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Audience
+## Region/Audience
 
 Create data frame:
 
@@ -149,14 +136,14 @@ df_reg_aud <- cSplit(df_reg_aud, "input_data.region", sep=",", direction="long")
 df_reg_aud <- cSplit(df_reg_aud, "input_data.audience", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
+fisher.test(df_reg_aud$input_data.region, df_reg_aud$input_data.audience,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Taxa
+## Region/Taxa
 
 Create data frame:
 
@@ -178,14 +165,14 @@ df_reg_tax <- cSplit(df_reg_tax, "input_data.region", sep=",", direction="long")
 df_reg_tax <- cSplit(df_reg_tax, "input_data.taxa", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
+fisher.test(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa,
+            simulate.p.value=TRUE)
 ```
 
-
-### Region/Environment
+## Region/Environment
 
 Create data frame:
 
@@ -207,59 +194,18 @@ df_reg_env <- cSplit(df_reg_env, "input_data.region", sep=",", direction="long")
 df_reg_env <- cSplit(df_reg_env, "input_data.environment", sep=",", direction="long")
 ```
 
-Check data frame:
+Fisher's exact test:
 
 ```{r}
-table(df_reg_env$input_data.region, df_reg_env$input_data.environment)
+fisher.test(df_reg_env$input_data.region, df_reg_env$input_data.environment,
+            simulate.p.value=TRUE)
 ```
-
-
-## Analysis
-
-### Audience/Taxa
-
-Chi square test:
-
-```{r}
-chisq.test(df_aud_tax$input_data.audience, df_aud_tax$input_data.taxa)
-```
-
-
-### Audience/Environment
-
-Chi square test:
-
-```{r}
-chisq.test(df_aud_env$input_data.audience, df_aud_env$input_data.environment)
-```
-
-
-### Region/Audience
-
-Chi square test:
-
-```{r}
-chisq.test(df_reg_aud$input_data.region, df_reg_aud$input_data.audience)
-```
-
-
-### Region/Taxa
-
-Chi square test:
-
-```{r}
-chisq.test(df_reg_tax$input_data.region, df_reg_tax$input_data.taxa)
-```
-
-
-### Region/Environment
 
 Chi square test:
 
 ```{r}
 chisq.test(df_reg_env$input_data.region, df_reg_env$input_data.environment)
 ```
-
 
 # Culmulative Links Models
 

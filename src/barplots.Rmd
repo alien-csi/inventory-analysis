@@ -1,0 +1,115 @@
+---
+title: "Code to reproduce barplots"
+author:
+- Quentin Groom  
+- Veronica Price-Jones
+- Lien Reyserhove
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    df_print: paged
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+subtitle: ''
+---
+
+# General settings
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Load libraries:
+
+```{r}
+library(tidyverse)      # To do data science
+library(magrittr)       # To use %<>% pipes
+library(here)           # To find files
+library(readxl)         # To read Excel files
+library(dplyr)          # To clean input data
+library(readr)
+```
+
+# Import files:
+
+```{r}
+appsProjects <- 
+  read_delim(
+    file = here::here("data", "appsProjects.txt"),
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+                           
+                           
+newProjectsThatMapAlienSpecies <- 
+  read_delim(
+    file = here::here("data", "newProjectsThatMapAlienSpecies.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+newProjectsWithPolicyRelevance <- 
+  read_delim(
+    file = here::here("data", "newProjectsWithPolicyRelevance.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfNewProjects <- 
+  read_delim(
+    file = here::here("data","numberOfNewProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfParticiProjects <- 
+  read_delim(
+    file = here::here("data","numberOfParticiProjects.txt"),
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfPubsProjects <- 
+  read_delim(
+    file = here::here("data","numberOfPubsProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+
+numberOfRecsProjects <- 
+  read_delim(
+    here::here("data","numberOfRecsProjects.txt"), 
+    escape_double = FALSE, 
+    trim_ws = TRUE)
+```
+
+# Generate plots
+
+Plot Usage Apps - Number of apps used:
+
+```{r}
+tiff("citsciinit.tiff", width=890, height=780, res=300)
+barplot(appsProjects$`Number of Projects`, main="Usage of App - Number of Projects",
+        xlab="Usage of App - Number of Projects",
+        ylab="Number of apps used", mar = c(1, 1, 1, 1), las=2,
+        cex= 1, cex.axis = 0.3, cex.names=0.5, cex.lab = 0.6, cex.main = 0.5,
+        names.arg=appsProjects$`Usage of App`)
+dev.off()
+
+```
+
+```{r}
+## draw the plot but without annotation
+barplot(appsProjects$`Number of Projects`, axes = TRUE, ann = TRUE)
+## add axes
+axis(1, at = 1:8, labels = appsProjects$`Usage of App`, cex.axis = 0.8)
+axis(2, cex.axis = 1.0)
+## now draw the y-axis annotation on a different line out from the plot
+## using the extra margin space:
+title(ylab = "Number of apps used", cex.lab = 1.5, line = 2)
+## draw the box to finish off
+box()
+```
+```{r}
+
+```
+
