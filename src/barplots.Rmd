@@ -102,7 +102,7 @@ Define order of factors in `numberOfParticiProjects`:
 numberOfParticiProjects$number_of_participants <- factor(numberOfParticiProjects$number_of_participants, ordered = TRUE)
 ```
 
-Recode `Info not available` and `Not applicable`:
+Recode `Info not available`:
 
 ```{r}
 numberOfParticiProjects <- numberOfParticiProjects %>% 
@@ -151,12 +151,22 @@ dev.off()
 
 ## Figure 3b: Number of records vs number of projects
 
-
 Define order of factors in `numberOfParticiProjects`:
 
 ```{r}
 numberOfRecsProjects$number_of_records <- factor(numberOfRecsProjects$number_of_records, ordered = TRUE)
 ```
+
+
+Recode `Info not available`:
+
+```{r}
+numberOfRecsProjects <- numberOfRecsProjects %>% 
+  mutate(number_of_records = recode(number_of_records,
+                                    "Information not available" = "Unknown",
+                                    "Not Applicable" = "Not applicable"))
+```
+
 
 Re-order `number_of_participants`:
 
@@ -175,8 +185,8 @@ numberOfRecsProjects$number_of_records <-
                      "100 001 - 500 000",
                      "500 001 - 1 000 000",
                      "> 1 000 001",
-                     "Information not available",
-                     "Not applicable"))
+                     "Not applicable",
+                     "Unknown"))
 ```
 
 ```{r}
