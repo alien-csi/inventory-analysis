@@ -158,7 +158,7 @@ numberOfRecsProjects$number_of_records <- factor(numberOfRecsProjects$number_of_
 ```
 
 
-Recode `Info not available`:
+Recode `Information not available` and `Not Applicable`:
 
 ```{r}
 numberOfRecsProjects <- numberOfRecsProjects %>% 
@@ -216,6 +216,14 @@ Define order of factors in `numberOfPubsProjects`:
 numberOfPubsProjects$number_of_publications <- factor(numberOfPubsProjects$number_of_publications, ordered = TRUE)
 ```
 
+Recode `Information not available` and `Not Applicable`:
+
+```{r}
+numberOfPubsProjects <- numberOfPubsProjects %>% 
+  mutate(number_of_publications = recode(number_of_publications,
+                                    "Not Applicable" = "Not applicable"))
+```
+
 Re-order `number_of_participants`:
 
 ```{r}
@@ -227,8 +235,8 @@ numberOfPubsProjects$number_of_publications <-
                      "11 - 20", 
                      "21 - 50", 
                      "> 100",
-                     "Unknown",
-                     "Not Applicable"))
+                     "Not applicable",
+                     "Unknown"))
 ```
 
 ```{r}
