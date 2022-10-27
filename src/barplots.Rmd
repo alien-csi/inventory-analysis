@@ -216,7 +216,7 @@ Define order of factors in `numberOfPubsProjects`:
 numberOfPubsProjects$number_of_publications <- factor(numberOfPubsProjects$number_of_publications, ordered = TRUE)
 ```
 
-Recode `Information not available` and `Not Applicable`:
+Recode `Not Applicable`:
 
 ```{r}
 numberOfPubsProjects <- numberOfPubsProjects %>% 
@@ -258,14 +258,20 @@ print(c)
 dev.off()
 ```
 
-
-
 ## Figure 3d: Plot Usage Apps - Number of apps used:
 
 Define `usage_of_app` as a factor:
 
 ```{r}
 appsProjects <- appsProjects %>% mutate(usage_of_app = factor(usage_of_app, ordered = TRUE))
+```
+
+Recode `N/A`:
+
+```{r}
+appsProjects <- appsProjects %>% 
+  mutate(usage_of_app = recode(usage_of_app,
+                                    "N/A" = "Not applicable"))
 ```
 
 Define order of factors in `appsProjects`:
@@ -284,7 +290,7 @@ appsProjects$usage_of_app <-
                      "11-25%", 
                      "51-75%", 
                      "76-100%", 
-                     "N/A",
+                     "Not applicable",
                      "Unknown"))
 ```
 
