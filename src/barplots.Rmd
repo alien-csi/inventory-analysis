@@ -235,12 +235,38 @@ dev.off()
 
 ## Figure 3d: Plot Usage Apps - Number of apps used:
 
+Define `usage_of_app` as a factor:
+
+```{r}
+appsProjects <- appsProjects %>% mutate(usage_of_app = factor(usage_of_app, ordered = TRUE))
+```
+
+Define order of factors in `appsProjects`:
+
+```{r}
+levels(appsProjects$usage_of_app)
+```
+Re-order `usage_of_app`:
+
+```{r}
+appsProjects$usage_of_app <- 
+  ordered(appsProjects$usage_of_app, 
+          levels = c("0%", 
+                     "1-5%",
+                     "6-10%", 
+                     "11-25%", 
+                     "51-75%", 
+                     "76-100%", 
+                     "N/A",
+                     "Unknown"))
+```
+
+
 ```{r}
 p <- ggplot(data=appsProjects, 
-            aes(x=`Number of Projects`, 
-                y=`Usage of App`)) +
+            aes(x=usage_of_app, 
+                y=number_of_projects)) +
   geom_bar(stat="identity") + 
-  coord_flip() + 
   theme_classic() +
   theme(
     text = element_text(size = 30),

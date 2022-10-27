@@ -354,45 +354,7 @@ str(input_data$number_of_publications)
 
 ## Analysis
 
-### Inspect independent variables
-
-The following independent variables were selected for the analyses:
-
-- duration (`duration`)
-- project design (`design`)
-- use of social media (`sm_yn`)
-- level of skill required (`skills`)
-- expected contribution frequencey (`contribution_frequency`)
-- provision of guidelines (`guidelines`)
-- training (`training_yn`)
-- sighting maps (`map`)
-- active informing (`active_informing`)
-- feedback (`feedback`)
-- support (`support`) 
-
-Inspect dependent variables on percentage of `NA`:
-
-```{r}
-input_data %>% 
-  select(duration, design, sm_yn,  skills, contribution_frequency, guidelines, training_yn, map, active_informing, feedback, support) %>% 
-  map(~mean(is.na(.)))
-```
-
 ### Number of invasive alien records
-
-The following variables are specified for analysis:
-
-- `design`
-- `duration`
-- `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
-- `training_yn`
-- `map`
-- `active_informing`
-- `feedback`
-- `support`
 
 Cumulative Link Model:
 
@@ -419,28 +381,7 @@ Output with p-values:
 anova(clm_ias_records)
 ```
 
-Conclusion:
-- significant positive effect of duration and provision of map
-- significant negative effect of limited/no prior skills/knowledge and provision of feedback
-- 64 deleted observations
-
 ### Number of participants
-
-Cumulative Link Model
-
-The following variables are specified for analysis:
-
-- `design`
-- `duration`
-- `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
-- `training_yn`
-- `map`
-- `active_informing`
-- `feedback`
-- `support`
 
 Cumulative link model:
 
@@ -463,29 +404,9 @@ Output with p-values:
 anova(clm_participants)
 ```
 
-Conclusion: 
-- significant positive effect of duration and map
-- 61 deleted observations
-
 ### Number of publications
 
 Cumulative Link Model
-
-The following variables are specified for analysis:
-
-- `design`
-- `duration`
-- `sm_yn`
-- `skills`
-- `contribution_frequency`
-- `guidelines`
-- `training_yn`
-- `map`
-- `active_informing`
-- `feedback`
-- `support`
-
-Cumulative link model:
 
 ```{r}
 clm_publications <- 
@@ -506,7 +427,74 @@ Output with p-values:
 anova(clm_publications)
 ```
 
-Conclusion:
-- significant positive effect of duration, social media, guidelines, training, map and feedback
--significant negative effect of limited/no prior skills, support
--59 deleted observations
+## Reduced models
+
+### Number of invasive alien records
+
+Cumulative Link Model:
+
+```{r}
+clm_ias_records <- 
+  clm(
+    no_ias_records ~ 
+      duration + 
+      skills + map,
+    data = input_data)
+```
+
+model output:
+
+```{r}
+summary(clm_ias_records)
+```
+
+
+Output with p-values:
+
+```{r}
+anova(clm_ias_records)
+```
+
+### Number of participants
+
+Cumulative link model:
+
+```{r}
+clm_participants <- 
+  clm(
+    number_of_participants ~ duration,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_participants)
+```  
+
+Output with p-values:
+
+```{r}
+anova(clm_participants)
+```
+
+### Number of publications
+
+Cumulative Link Model
+
+```{r}
+clm_publications <- 
+  clm(
+    number_of_publications ~ duration + sm_yn + guidelines + training_yn,
+    data = input_data)
+```
+
+Model output:
+
+```{r}
+summary(clm_publications)
+```  
+
+```{r}
+anova(clm_publications)
+```
